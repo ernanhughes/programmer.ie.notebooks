@@ -2,4 +2,6 @@
 notebooks for programmer.ie blog
 
 [Activation Functions](/notebooks/activation.ipynb)  
+[Poisson](/notebooks/poisson.ipynb)  
+
 

@@ -3,3 +3,7 @@ numpy<2
 pandas
 matplotlib
 scikit-learn
+whisper-timestamped
+#ctranslate2==3.24.0
+hf_transfer
+pygame
