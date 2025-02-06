@@ -7,3 +7,4 @@ whisper-timestamped
 #ctranslate2==3.24.0
 hf_transfer
 pygame
+transformers
