@@ -1,6 +1,6 @@
 # Embeddings From First Principles — Notebook Companions
 
-Runnable notebook companions for **Embeddings From First Principles** (chapters 01–24).
+Runnable notebook companions for **Embeddings From First Principles** (chapters 01–26).
 
 The **book is the authority for chapter meaning.** Each notebook isolates one falsifiable
 question from its chapter and answers it — the same "concept → demonstration" move the
@@ -10,7 +10,7 @@ chapters use, rebuilt as code.
 
 Unlike the debugging book, this one *has* a measurement substrate:
 `experiments/embeddings-from-first-principles/` ships the frozen **RELATE** corpus and the
-committed **Wave 1–5 artifacts** (`wave{N}/artifacts/*.json`) that every `MEASURED on
+committed **Wave 1–6 artifacts** (`wave{N}/artifacts/*.json`) that every `MEASURED on
 RELATE …` table in the manuscript is drawn from. So the notebooks are **hybrid**:
 
 1. **Mechanism, in NumPy.** The conceptual core of each chapter is a small self-contained
@@ -62,9 +62,48 @@ notebook checks the *measured* outcome, not the hypothesis.
 | `19-chapter.ipynb` | Alignment | Does a nonlinear MLP beat closed-form Procrustes/ridge on preservation — or lose while costing more (Wave 3 bake-off)? | ✅ |
 | `20-chapter.ipynb` | The Embedding Bridge | Does `usable_for` come out `[retrieval, clustering]` and `not_usable_for` `[threshold_transfer, relation_tasks]` from the measured profile (Wave 3)? | ✅ |
 | `21-chapter.ipynb` | Did the Bridge Preserve the Space? | Can a fitted bridge *invert* the paraphrase-vs-negation gap, and can a supervised bridge exceed the source-native score (Wave 3)? | ✅ |
-| `22-chapter.ipynb` | Can a Smaller Representation Preserve a Larger One? | Does whole-document drift (layer 1) detect 0% of eight corruptions while only external NLI catches a reversed fact (Wave 4)? | ✅ |
-| `23-chapter.ipynb` | From Deltas to Operators | On typed sentence edits, does anything above a constant offset ever win — or are the expressive rungs strictly worse (Wave 5)? | ✅ |
-| `24-chapter.ipynb` | Building an Embedding Runtime | The Observatory composed over Waves 1–5: near-but-wrong caught by the *system*, not the geometry. | ✅ |
+| `22-chapter.ipynb` | Can a Smaller Representation Preserve a Larger One? | Can a bridge recover the paired target (R@10 1.000) while agreement@10 sits at 0.80 (Wave 6)? | ✅ |
+| `23-chapter.ipynb` | What Should a Translation Preserve? | Does forcing source geometry help or hurt target behavior under a VSP sweep (Wave 6)? | ✅ |
+| `24-chapter.ipynb` | Documents Are Not Sentences | Do 10–50% compressions preserve source top-1 while neighbourhood overlap falls, and does layer-1 drift detect 0% of controlled corruptions (Wave 4)? | ✅ |
+| `25-chapter.ipynb` | From Deltas to Operators | On typed sentence edits, does anything above a constant offset ever win — or are the expressive rungs strictly worse (Wave 5)? | ✅ |
+| `26-chapter.ipynb` | Building an Embedding Runtime | The Observatory composed over Waves 1–6: near-but-wrong caught by the *system*, not the geometry. | ✅ |
+
+## Lab map — the laboratory behind the chapters
+
+Every chapter lab is a three-layer artifact: the book demonstrates the measured result,
+the notebook replays it from the frozen artifact, and the reader varies it. Statuses:
+**MEASURED** (we ran it, the chapter reports it), **REPRODUCIBLE** (rerun command
+reproduces it), **TRY IT** (reader knobs), **PARTLY** (lower bound / hypothesis labelled
+as such in the chapter).
+
+| Lab | Artifact | Reproduce | Status | Try-it knobs |
+|---|---|---|---|---|
+| 1 | `wave1/artifacts/relation-cosine-by-type.json` | `run_wave1.py 1.1` | MEASURED | model, sentence sets |
+| 2 | `wave1/artifacts/lab02-break-one.json` + `pca-projection.json` | `lab02_break_one.py` | MEASURED | `WORDS`, `MODEL`, `SEED`, perplexity |
+| 3 | `wave1/artifacts/ppmi-svd-relate.json` | `run_wave1.py 1.2` | MEASURED | SVD `k ∈ {10, 50, 200}`, seeds |
+| 4 | `wave1/artifacts/metric-sweep.json` | `run_wave1.py 1.3` | MEASURED | un-normalized representation |
+| 5 | `wave2/artifacts/rotation-invariance.json` + `wave1/artifacts/anisotropy.json` | `run_wave2.py 2.1` | MEASURED | rotation seeds, axis picks |
+| 6 | `wave1/artifacts/hubness.json` | `run_wave1.py 1.5` | MEASURED | k, index size |
+| 7 | `wave2/artifacts/retention-curves.json` + `dimensionality-report.json` | `run_wave2.py 2.2 2.3 2.4 2.5` | MEASURED | truncation set, second model/domain |
+| 8 | `wave2/artifacts/shape-comparison.json` + `whitening-gain.json` | `run_wave2.py 2.8 2.9` | MEASURED | third model, whitening stages |
+| 9 | `wave1/artifacts/ann-vs-exact.json` | `run_wave1.py 1.6` | MEASURED | `ef_search`, PQ, latency budget |
+| 10 | `wave1/artifacts/distractor-winrate.json` | `run_wave1.py 1.7` | MEASURED | distractor types, reranker |
+| 11 | `wave1/artifacts/margin-collapse.json` | `run_wave1.py 1.8` | MEASURED | negative-set construction |
+| 12 | `wave1/artifacts/policy-ablation.json` | `run_wave1.py 1.13` | MEASURED | stages, chunk sizes, budget |
+| 13 | `wave1/artifacts/relevance-definition-sweep.json` + `v02/` | `RELATE_RELEASE=relate-0.2.0 python run_wave1.py 1.9` | MEASURED | private queries, definitions |
+| 14 | `wave1/artifacts/calibration.json` + `threshold-drift.json` | `run_wave1.py 1.10 1.11` | MEASURED | FAR/FRR targets, second corpus |
+| 15 | `wave1/artifacts/signal-ablation.json` | `run_wave1.py 1.12` | MEASURED | signal subsets, verifier |
+| 16 | `wave3/artifacts/space-comparison.json` | `run_wave3.py 3.1` | MEASURED | model pairs, hard regions |
+| 17 | `wave3/artifacts/mixed-index-penalty-curve.json` | `run_wave3.py 3.2` | PARTLY (lower bound) | divergent v1→v2 pair |
+| 18 | `wave3/artifacts/ladder-8property-matrix.json` | `run_wave3.py 3.4` | MEASURED | anchor counts, λ |
+| 19 | `wave3/artifacts/null-map-baseline.json` + `nonlinear-vs-linear-unpaired.json` | `run_wave3.py 3.3 3.5` | MEASURED | map set, anchor coverage |
+| 20 | `wave3/artifacts/ladder-8property-matrix.json` + `roundtrip.json` | `run_wave3.py 3.4 3.6 3.9` | MEASURED | per-task bars, direction |
+| 21 | `wave3/artifacts/relation-preservation.json` + `supervised-bridge-ceiling.json` | `run_wave3.py 3.4 3.6 3.7 3.9` | MEASURED | consumer metric, supervision |
+| 22 | `wave6/artifacts/cross-space-benchmark.json` | `run_wave6.py` | MEASURED | direction, anchor count |
+| 23 | `wave6/artifacts/vsp-sweep.json` | `vsp_sweep.py` | MEASURED | VSP weight, rank loss |
+| 24 | `wave4/artifacts/retention-curve.json` + `blindspot-matrix.json` | `run_wave4.py` | MEASURED | ratios, corruptions |
+| 25 | `wave5/artifacts/operator-bakeoff.json` | `run_wave5.py` | MEASURED | 10th transformation |
+| 26 | all of the above (composition) | `run_wave1.py && run_wave3.py && run_wave4.py` | MEASURED | corpus, models, invariant |
 
 ## Skip log
 
