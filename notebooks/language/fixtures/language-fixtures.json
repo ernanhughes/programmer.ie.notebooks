@@ -1,0 +1,132 @@
+{
+  "fixture_id": "language-fixtures-v1",
+  "description": "Deterministic fixtures for Language chapter notebooks. All data is constructed or synthetic; no real user data, no model outputs, no credentials.",
+  "generated": "2026-10-20T00:00:00Z",
+  "seed": 20261020,
+
+  "ward_handover": {
+    "source": "Overnight registrar's notes for a 20-patient ward.",
+    "representation": "Bed seven: keep an eye on him. Pending blood result pending. Mrs Alvarez, bed three, family needs careful conversation. Mr Chen, bed twelve, stable.",
+    "intent": "Leave the day team able to recognise the risks and act on them.",
+    "reconstructions": [
+      {
+        "receiver": "Experienced registrar who covered the ward last week",
+        "prior_knowledge": ["patient drifts before deteriorating", "under-reports pain", "keep an eye on him = check within the hour"],
+        "recovered": "Check bed seven within the hour; watch for observation drift; pending blood result may change everything.",
+        "added": "Specific one-hour deadline (not in the representation)",
+        "missed": "Nothing from the representation was lost"
+      },
+      {
+        "receiver": "New registrar, first week on the ward",
+        "prior_knowledge": ["patient needs some vigilance"],
+        "recovered": "Bed seven needs vigilance; no particular deadline.",
+        "added": "No deadline inferred",
+        "missed": "The urgency and conditionality of the original concern"
+      }
+    ],
+    "lesson": "Representation is not meaning. Identical words produce different reconstructions depending on what the receiver brings."
+  },
+
+  "deadlock": {
+    "source": "Two services deadlock during a Tuesday batch process. Service A holds lock one and waits for lock two; service B holds lock two and waits for lock one.",
+    "representations": {
+      "prose": "Service A is holding lock one while waiting for lock two, and service B is holding lock two while waiting for lock one, creating a circular wait.",
+      "diagram": "A --> holds lock 1 --> waits for lock 2\nB --> holds lock 2 --> waits for lock 1\n(circular wait)",
+      "demonstration": "Two coffee cups as locks, acted out by two people."
+    },
+    "lesson": "Different representations preserve different parts of meaning. The diagram makes the circular relationship visible; prose states it precisely."
+  },
+
+  "incident_report": {
+    "source_version": "incident-report-v1",
+    "source": "Database failed on Tuesday. Timeline, log excerpts, five candidate causes, a disputed conclusion. Hypothesis three can be excluded only if replication lag is below a specified threshold. The replication-lag measurement is missing.",
+    "candidate_causes": ["H1: network partition", "H2: index corruption", "H3: replication lag", "H4: connection pool exhaustion", "H5: query regressions"],
+    "conditional": "Hypothesis three excluded only if replication lag below threshold",
+    "missing_measurement": "Replication-lag measurement is missing",
+    "dispute": "Two engineers dispute the conclusion",
+    "fix": "Proposed fix by author J, justification stated",
+    "unfaithful_summary": "Hypothesis three is excluded.",
+    "faithful_preview": "Hypothesis three is excluded only if replication lag is below threshold; that measurement is missing.",
+    "preservation_obligations": [
+      "all five candidate causes and their evidence",
+      "who disputes the conclusion and why",
+      "hypothesis three is conditional on the lag condition",
+      "the replication-lag measurement is missing",
+      "the proposed fix, its author and justification",
+      "where each decision-relevant item appears in the source"
+    ],
+    "lesson": "A fluent diagram can invert a conditional conclusion by deleting a condition. Survival must be checked against declared obligations, not fluency."
+  },
+
+  "job_queue": {
+    "request": "A job must never be executed twice. A job that fails for a transient reason should be retried up to three times.",
+    "readings": {
+      "reading_a": "executed means the worker ran; another attempt breaches the prohibition",
+      "reading_b": "executed means the queue recorded one completion; retries may charge twice",
+      "reading_c": "executed means money actually moved; retry permissible only if no second charge"
+    },
+    "ladder": [
+      "natural prose: 'A job should never run twice, but transient failures should be retried.'",
+      "controlled prose: 'Each job has at most one completed execution. A failed attempt marked transient may be retried up to 3 times.'",
+      "structured requirements: R1 recorded completions per job <= 1; R2 additional retries per job, cause = transient, <= 3",
+      "schemas and constraints: fields job_id, attempt, status, cause; constraint: count(status=completed, by job_id) <= 1; missing: external-effect identity and deduplication rule",
+      "executable contracts: test or runtime assertion that fails when the constraint breaks",
+      "state-transition representations: pending -> running -> completed, or running -> failed(transient) -> pending (at most 3 times)",
+      "formal specification: invariant stated in logic, with assumptions stated, model shown to satisfy it"
+    ],
+    "lesson": "A series of mutually consistent representations can all inherit the same initial interpretive mistake. The binding between option, definition and source must be declared."
+  },
+
+  "video_talk": {
+    "source": "One-hour conference talk on a consensus protocol.",
+    "moments": [
+      {"minute": 4, "content": "Speaker defines 'fault' as a node crash, not arbitrary incorrect behaviour. No slide flags the definition."},
+      {"minute": 42, "content": "Speaker demonstrates the protocol committing in two round trips while some nodes crash."},
+      {"minute": 53, "content": "Question about unbounded message delays. Speaker says the fast-commit claim assumes bounded communication delays."}
+    ],
+    "units": [
+      {"unit_id": "u1", "span": [0, 6], "claims": ["fault = node crash"], "dependencies": []},
+      {"unit_id": "u2", "span": [40, 45], "claims": ["commits in two round trips with crashes"], "dependencies": ["u1"]},
+      {"unit_id": "u3", "span": [52, 56], "claims": ["fast-commit assumes bounded delays"], "dependencies": ["u2"]}
+    ],
+    "misleading_summary": "The protocol commits in two round trips.",
+    "faithful_summary": "The protocol commits in two round trips under bounded message delays; faults are node crashes.",
+    "lesson": "A unit must link distant evidence while preserving the route back to each moment. Keeping only minute 42 removes the timing qualification."
+  },
+
+  "subscription_candidates": [
+    {"candidate_id": "c1", "source": "paper-X", "title": "New consensus result possibly weakening bounded-delay assumption", "relation": "possible", "task_relevance": "high", "novelty": "new to Iris"},
+    {"candidate_id": "c2", "source": "library-Y", "title": "Major update to a library Iris uses often", "relation": "update", "task_relevance": "medium", "novelty": "known"},
+    {"candidate_id": "c3", "source": "survey-Z", "title": "Survey of consensus protocols, mostly material Iris knows", "relation": "background", "task_relevance": "low", "novelty": "none"},
+    {"candidate_id": "c4", "source": "incident-report", "title": "Incident affecting tonight's deployment", "relation": "blocker", "task_relevance": "critical", "novelty": "new"}
+  ],
+
+  "personal_state": {
+    "declared": ["I want to finish this paper first before opening another", "Show implementation detail and equations when they affect the decision"],
+    "observed": ["opened tables more often than prose", "expanded mathematical detail", "left some diagrams unopened"],
+    "inferred": ["prefers tabular views", "likes mathematical detail"],
+    "lesson": "Declared, observed and inferred are different origins with different authority. A click is not a stable preference."
+  },
+
+  "proxy_scenario": {
+    "principal": "Iris",
+    "grant": "Book one refundable hotel within limits: <= €350/night, specified dates, refundable.",
+    "counteroffer": "€400 per night with a free upgrade.",
+    "prepared_message": "€400 works for me.",
+    "speech_acts": ["preparation (draft)", "transmission (sending)", "accepting (speech act)"],
+    "lesson": "Preparing words is not transmitting them; transmitting is not performing the speech act. Authority is typed by the act."
+  },
+
+  "language_runtime_trace": {
+    "scenario": "Prepare the Language book for publication: review chapters 10 and 11 first.",
+    "stages": [
+      {"stage": "expression", "description": "Principal submits publication intention."},
+      {"stage": "proposal", "description": "Interpreter proposes an interpretation bound to source evidence."},
+      {"stage": "correction", "description": "Human corrects the proposed intent."},
+      {"stage": "acceptance", "description": "Human accepts the interpretation into shared Language State."},
+      {"stage": "transfer", "description": "Accepted state, public semantics and evidence digests sent to a fresh recipient; original conversation excluded."},
+      {"stage": "use", "description": "Recipient readback proposes an editorial action; simulation shows BLOCKED without a separate grant."}
+    ],
+    "lesson": "An intention becomes an agreed semantic state, traceable to source, and another agent can use that state only within its granted authority."
+  }
+}
